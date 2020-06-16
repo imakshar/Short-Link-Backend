@@ -11,6 +11,13 @@ type User {
     createdAt: String
     updatedAt: String
 }
+type ShortLink {
+    id: ID
+    original_url: String
+    short_url: String
+    createdAt: DateTime
+    updatedAt: DateTime
+}
 
 #/* -------------------------------------------------------------------------- */
 #/*                               GraphQL Queries                              */
@@ -28,6 +35,7 @@ type Query {
 type Mutation {
     signUp(name: String!, email: String!, password: String!): User
     signIn(email: String!, password: String!): JSONObject
+    createShortLink(original_url: String!, short_url: String): ShortLink
 }
 
 #/* -------------------------------------------------------------------------- */
