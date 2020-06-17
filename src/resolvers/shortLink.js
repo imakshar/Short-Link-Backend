@@ -34,9 +34,28 @@ const findOneByShortUrl = async (short_url) => {
         });
     });
 };
+const ShortLinksByID = async (id) => {
+    //TODO fing by id
+    return new Promise((resolve, reject) => {
+        ShortLink.find((err, data) => {
+            if (err) reject(err);
+            resolve(data);
+        });
+    });
+};
+
+const UpdateCountById = async (id) => {
+    ShortLink.findOne({ _id: id }, async (err, data) => {
+        if (data) {
+            data.clicks = data.clicks + 1;
+            await data.save();
+        }
+    });
+};
 const generateRandomString = (length = 6) =>
     Math.random().toString(36).substring(6);
-const createAndSaveUrl = async (url, short_url) => {
+
+const createAndSaveUrl = async (url, short_url, title) => {
     let short_link = short_url || generateRandomString();
     let res = await findOneByShortUrl(short_link).catch((err) => {
         throw new ApolloError(
@@ -44,16 +63,19 @@ const createAndSaveUrl = async (url, short_url) => {
         );
     });
     if (res) {
-        createAndSaveUrl(url);
+        createAndSaveUrl(url, title);
     } else {
         return new Promise((resolve, reject) => {
             new ShortLink({
                 original_url: url,
                 short_url: short_link,
+                title,
             }).save((err, data) => {
                 if (err) reject(err);
                 resolve({
                     id: data.id,
+                    title: data.title,
+                    clicks: data.clicks,
                     original_url: data.original_url,
                     short_url: data.short_url,
                     createdAt: data.createdAt,
@@ -65,7 +87,16 @@ const createAndSaveUrl = async (url, short_url) => {
 };
 export default {
     ShortLink: {},
-    Query: {},
+    Query: {
+        async shortLinks(parent, args, context) {
+            let res = await ShortLinksByID(context.auth.user.id).catch(
+                (err) => {
+                    throw new ValidationError("Invalid Request");
+                }
+            );
+            return res || [];
+        },
+    },
     Mutation: {
         async createShortLink(parent, args, context) {
             let url = args.original_url;
@@ -92,17 +123,19 @@ export default {
                             throw new UserInputError("ShortLink already exist");
                         }
                     }
-                    let res = await createAndSaveUrl(url, args.short_url).catch(
-                        (err) => {
-                            throw new ApolloError(
-                                "Somthing went wrong while creating new ShortLink"
-                            );
-                        }
-                    );
+                    let res = await createAndSaveUrl(
+                        url,
+                        args.short_url,
+                        args.title
+                    ).catch((err) => {
+                        throw new ApolloError(
+                            "Somthing went wrong while creating new ShortLink"
+                        );
+                    });
                     return res;
                 }
             }
         },
     },
 };
-export { findOneByShortUrl };
+export { findOneByShortUrl, UpdateCountById };
