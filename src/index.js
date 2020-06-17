@@ -18,6 +18,7 @@ import { JSONObjectDefinition, DateTimeTypeDefinition } from "graphql-scalars";
 import resolvers from "./resolvers/index";
 import mongoose from "mongoose";
 import { decodeToken, authenticateCustomFunc } from "./jwt";
+import { loadAdditionalRoutes } from "../additionalRoutes";
 
 /* -------------------------------------------------------------------------- */
 /*              DEVONLY console formatting with file line number              */
@@ -60,6 +61,9 @@ import { decodeToken, authenticateCustomFunc } from "./jwt";
         const app = express();
         app.use(cors());
         app.use(express.static("public"));
+
+        // LOAD ADDITIONAL ROUTES
+        loadAdditionalRoutes(app);
 
         // Auth Directive Setup
         const AuthDirectives = require("graphql-directive-auth").AuthDirective;
@@ -109,7 +113,7 @@ import { decodeToken, authenticateCustomFunc } from "./jwt";
             playground: process.env.NODE_ENV !== "production",
         });
 
-        // Subscriptions Setup 
+        // Subscriptions Setup
         const httpServer = http.createServer(app);
         server.applyMiddleware({ app });
         server.installSubscriptionHandlers(httpServer);
@@ -117,10 +121,13 @@ import { decodeToken, authenticateCustomFunc } from "./jwt";
         const PORT = process.env.APP_PORT || 3000;
 
         httpServer.listen(PORT, () => {
-            console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`),
-            console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`);
+            console.log(
+                `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+            ),
+                console.log(
+                    `🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`
+                );
         });
-
     } catch (error) {
         console.error(error);
     }

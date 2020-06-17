@@ -105,3 +105,4 @@ export default {
         },
     },
 };
+export { findOneByShortUrl };
