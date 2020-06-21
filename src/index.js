@@ -9,8 +9,12 @@ import fs from "fs";
 import http from "http";
 import dotenv from "dotenv";
 dotenv.config();
-import { JSONObjectDefinition, DateTimeTypeDefinition } from "graphql-scalars";
-
+const {
+    EmailAddressTypeDefinition,
+    JSONObjectDefinition,
+    URLTypeDefinition,
+    DateTimeTypeDefinition,
+} = require("graphql-scalars");
 /* -------------------------------------------------------------------------- */
 /*                                File imports                                */
 /* -------------------------------------------------------------------------- */
@@ -79,7 +83,9 @@ import { loadAdditionalRoutes } from "../additionalRoutes";
         const server = new ApolloServer({
             typeDefs: [
                 // graphql-scalars
+                EmailAddressTypeDefinition,
                 JSONObjectDefinition,
+                URLTypeDefinition,
                 DateTimeTypeDefinition,
 
                 // Data schema

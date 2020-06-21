@@ -11,6 +11,7 @@ const shortLinkSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        user_id: String,
     },
     {
         timestamps: true, // createdAt, updatedAt automatically added!

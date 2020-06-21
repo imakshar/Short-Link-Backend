@@ -19,6 +19,7 @@ type ShortLink {
     updatedAt: DateTime
     title: String
     clicks: Int
+    user_id: String
 }
 
 #/* -------------------------------------------------------------------------- */
@@ -27,8 +28,8 @@ type ShortLink {
 
 type Query {
     users: [User] @isAuthenticated
-    user(id: String): User @isAuthenticated
-    shortLinks: [ShortLink]
+    auth_user: User @isAuthenticated
+    short_links: [ShortLink]
 }
 
 #/* -------------------------------------------------------------------------- */
@@ -36,9 +37,9 @@ type Query {
 #/* -------------------------------------------------------------------------- */
 
 type Mutation {
-    signUp(name: String!, email: String!, password: String!): User
-    signIn(email: String!, password: String!): JSONObject
-    createShortLink(
+    signup(name: String!, email: EmailAddress!, password: String!): User
+    signin(email: EmailAddress!, password: String!): JSONObject
+    create_shortLink(
         original_url: String!
         title: String!
         short_url: String

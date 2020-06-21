@@ -35,9 +35,8 @@ const findOneByShortUrl = async (short_url) => {
     });
 };
 const ShortLinksByID = async (id) => {
-    //TODO fing by id
     return new Promise((resolve, reject) => {
-        ShortLink.find((err, data) => {
+        ShortLink.find({ user_id: id }, (err, data) => {
             if (err) reject(err);
             resolve(data);
         });
@@ -55,7 +54,7 @@ const UpdateCountById = async (id) => {
 const generateRandomString = (length = 6) =>
     Math.random().toString(36).substring(6);
 
-const createAndSaveUrl = async (url, short_url, title) => {
+const createAndSaveUrl = async (url, short_url, title, user_id) => {
     let short_link = short_url || generateRandomString();
     let res = await findOneByShortUrl(short_link).catch((err) => {
         throw new ApolloError(
@@ -70,6 +69,7 @@ const createAndSaveUrl = async (url, short_url, title) => {
                 original_url: url,
                 short_url: short_link,
                 title,
+                user_id,
             }).save((err, data) => {
                 if (err) reject(err);
                 resolve({
@@ -80,6 +80,7 @@ const createAndSaveUrl = async (url, short_url, title) => {
                     short_url: data.short_url,
                     createdAt: data.createdAt,
                     updatedAt: data.updatedAt,
+                    user_id: data.user_id,
                 });
             });
         });
@@ -88,7 +89,7 @@ const createAndSaveUrl = async (url, short_url, title) => {
 export default {
     ShortLink: {},
     Query: {
-        async shortLinks(parent, args, context) {
+        async short_links(parent, args, context) {
             let res = await ShortLinksByID(context.auth.user.id).catch(
                 (err) => {
                     throw new ValidationError("Invalid Request");
@@ -98,7 +99,7 @@ export default {
         },
     },
     Mutation: {
-        async createShortLink(parent, args, context) {
+        async create_shortLink(parent, args, context) {
             let url = args.original_url;
 
             let validUrl = await testValidUrl(url).catch((err) => {
@@ -126,7 +127,8 @@ export default {
                     let res = await createAndSaveUrl(
                         url,
                         args.short_url,
-                        args.title
+                        args.title,
+                        context.auth.user.id
                     ).catch((err) => {
                         throw new ApolloError(
                             "Somthing went wrong while creating new ShortLink"

@@ -11,18 +11,18 @@ export default {
         },
     },
     Query: {
-        users(parent, args, context) {
+        async users(parent, args, context) {
             return User.find({});
         },
-        user(parent, args, context) {
+        async auth_user(parent, args, context) {
             if (!mongoose.isValidObjectId(args.id)) {
                 throw new UserInputError(`Invalid UserId provided!`);
             }
-            return User.findById(args.id);
+            return User.findById(context.auth.user.id);
         },
     },
     Mutation: {
-        async signUp(parent, args, context) {
+        async signup(parent, args, context) {
             let count = await User.countDocuments({ email: args.email });
             if (count > 0) {
                 throw new UserInputError(
@@ -34,7 +34,7 @@ export default {
             pubsub.publish("WELCOME", { welcomeMessage });
             return user;
         },
-        async signIn(parent, { email, password }, context) {
+        async signin(parent, { email, password }, context) {
             let user = await User.findOne({ email });
             if (user) {
                 let isPasswordCorrect = await compare(password, user.password);
