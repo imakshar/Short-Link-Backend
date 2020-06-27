@@ -29,7 +29,7 @@ type ShortLink {
 type Query {
     users: [User] @isAuthenticated
     auth_user: User @isAuthenticated
-    short_links: [ShortLink]
+    short_links: [ShortLink] @isAuthenticated
 }
 
 #/* -------------------------------------------------------------------------- */
@@ -44,6 +44,15 @@ type Mutation {
         title: String!
         short_url: String
     ): ShortLink
+    update_link_info(
+        id: String!
+        original_url: String!
+        title: String!
+        short_url: String!
+    ): ShortLink
+    remove_all_users(key: String!): Boolean
+    remove_all_links(key: String!): Boolean
+    remove_link(id: String!): Boolean
 }
 
 #/* -------------------------------------------------------------------------- */
