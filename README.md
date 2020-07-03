@@ -1,4 +1,10 @@
-## Boilerplate Backend using Node-Express-GraphQL-ApolloServer with MONGO DB  
+# Short Link
+
+  URL shortening service and link management platform, where you can create
+  and manage your custom short links Easy access to long urls with custom
+  short links 
+  
+## Shortlink Backend using Node-Express-GraphQL-ApolloServer with MONGO DB  
 
 -   with JWT authorization
 -   web socket connection for graphql subscriptions.
@@ -7,20 +13,20 @@
 ### Tree Structure
 
     src
-    ┣ models
-    ┃ ┣ User.js
-    ┃ ┣ <other models...>
-    ┃ ┗ index.js <entry point>
-    ┣ resolvers
-    ┃ ┣ <other resolvers...>
-    ┃ ┣ subscription.js <subscriptions...>
-    ┃ ┣ user.js
-    ┃ ┗ index.js <entry point>
-    ┣ schema
-    ┃ ┗ schema.gql <graphql type schema>
-    ┣ index.js <server setup>
-    ┣ jwt.js <jwt authorization configs>
-    ┗ utils.js <general utils>
+     ┣ models
+     ┃ ┣ ShortLink.js
+     ┃ ┣ User.js
+     ┃ ┗ index.js
+     ┣ resolvers
+     ┃ ┣ index.js
+     ┃ ┣ shortLink.js
+     ┃ ┣ subscription.js
+     ┃ ┗ user.js
+     ┣ schema
+     ┃ ┗ schema.gql
+     ┣ index.js
+     ┣ jwt.js
+     ┗ utils.js
 
 `start.js` root entry point for backend server!
 
