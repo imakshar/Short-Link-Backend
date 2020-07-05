@@ -6,9 +6,11 @@
   
 ## Shortlink Backend using Node-Express-GraphQL-ApolloServer with MONGO DB  
 
--   with JWT authorization
+-   JWT authorization
 -   web socket connection for graphql subscriptions.
--   with graphql directive auth
+-   graphQL directives for ACL.
+-   nodemailer for sending email's
+-   express 
 
 ### Tree Structure
 
