@@ -15,34 +15,44 @@
     src
      ┣ models
      ┃ ┣ ShortLink.js
+     ┃ ┣ TempResetToken.js
      ┃ ┣ User.js
      ┃ ┗ index.js
      ┣ resolvers
      ┃ ┣ index.js
      ┃ ┣ shortLink.js
      ┃ ┣ subscription.js
+     ┃ ┣ tempResetToken.js
      ┃ ┗ user.js
      ┣ schema
      ┃ ┗ schema.gql
      ┣ index.js
      ┣ jwt.js
      ┗ utils.js
+    .env
+    start.js
 
 `start.js` root entry point for backend server!
 
 ## create .env file
 
-APP_PORT=port
+    APP_PORT=3000 || or any
+    HOST=localhost || or any
+    NODE_ENV=development || production
+    APP_SECRET="somthing serious key"
+    MONGO_DB="database url"
+    EMAIL=your email account ( to send email's to client)
+    PW=email account password
 
-NODE_ENV=development or production
+## Available Scripts
 
-MONGO_DB=connection url
+In the project directory, you can run:
 
-APP_SECRET=serious key for jwt auth
+### `npm i`
 
-### run npm i to install dependencies
+### `npm start`
 
-### after installing dependencies, run npm start
+### After installing dependencies, run npm start
 
 `🚀 Server ready at http://localhost:<port>/<graphqlServerPath>`
 
