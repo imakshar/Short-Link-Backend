@@ -21,7 +21,9 @@ const loadAdditionalRoutes = (app) => {
         if (user) {
             let response = await GenrateToken(req.params.email, "email").catch(
                 (err) => {
-                    throw new ApolloError(err);
+                    res.status(403).send(
+                        "Somthing went wrong in token generation"
+                    );
                 }
             );
 
@@ -34,8 +36,7 @@ const loadAdditionalRoutes = (app) => {
             });
             let mailDetails = {
                 from: process.env.EMAIL,
-                // to:  req.params.email,
-                to: `aksharsarvaiya123@gmail.com`,
+                to: req.params.email,
                 subject: "Password Reset ",
                 text: "Shortlink password reset link",
                 html: `<p>Shortlink password reset token is <strong>${response.token}<strong> </p>`,
@@ -46,13 +47,16 @@ const loadAdditionalRoutes = (app) => {
                     res.send({ message: "Somthing went wrong" });
                 } else {
                     res.send({
-                        message: "Email sent successfully",
+                        message:
+                            "Password Rest token sent to your mail successfully.",
                         mail_id: data.messageId,
                     });
                 }
             });
         } else {
-            res.status(403).send("Email not exist!");
+            res.status(403).send({
+                message: "Account with this email is not exist.",
+            });
         }
     });
 };

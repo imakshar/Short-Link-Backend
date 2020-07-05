@@ -66,7 +66,7 @@ export default {
         async reset_password(parent, args, context) {
             let { email, token, new_password } = args;
             let res = await ValidateToken(email, token).catch((err) => {
-                throw new ApolloError("Token expired");
+                throw new UserInputError(err);
             });
             if (res && res.isValid) {
                 await User.findOne({ email }, async (err, data) => {
@@ -78,7 +78,7 @@ export default {
                 });
                 return true;
             } else {
-                throw new ApolloError("Token expired");
+                throw new UserInputError("Token expired");
             }
         },
     },
