@@ -1,9 +1,18 @@
 import { User } from "../models";
-import { UserInputError } from "apollo-server-express";
+import { UserInputError, ApolloError } from "apollo-server-express";
 import mongoose from "mongoose";
 import { compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { pubsub } from "../utils";
+import { ValidateToken } from "./tempResetToken";
+const findOneByEmail = async (email) => {
+    return new Promise((resolve, reject) => {
+        User.findOne({ email }, (err, data) => {
+            if (err) reject(err);
+            resolve(data);
+        });
+    });
+};
 export default {
     User: {
         message(parent) {
@@ -54,5 +63,25 @@ export default {
             if (args.key === "sudo delete all") await User.deleteMany({});
             return true;
         },
+        async reset_password(parent, args, context) {
+            let { email, token, new_password } = args;
+            let res = await ValidateToken(email, token).catch((err) => {
+                throw new ApolloError("Token expired");
+            });
+            if (res && res.isValid) {
+                await User.findOne({ email }, async (err, data) => {
+                    if (err) throw new ApolloError("Somthing went wrong");
+                    if (data) {
+                        data.password = new_password;
+                        await data.save();
+                    }
+                });
+                return true;
+            } else {
+                throw new ApolloError("Token expired");
+            }
+        },
     },
 };
+
+export { findOneByEmail };

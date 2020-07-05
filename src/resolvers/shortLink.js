@@ -5,7 +5,6 @@ import {
     ApolloError,
 } from "apollo-server-express";
 import dns, { resolve } from "dns";
-import mongoose from "mongoose";
 const testValidUrl = async (url) => {
     /* firstSlice -> ://www.gtu.ac.in/ */
     let firstSlice = url.match(/(:\/\/[a-z]+.+[a-z]+\/)/g);
@@ -18,7 +17,8 @@ const testValidUrl = async (url) => {
         });
     });
 };
-const findOneByOrginalUrl = async (url) => {
+
+const findOneByOriginalUrl = async (url) => {
     return new Promise((resolve, reject) => {
         ShortLink.findOne({ original_url: url }, (err, data) => {
             if (err) reject(err);
@@ -133,7 +133,7 @@ export default {
                 throw new UserInputError("Invalid Url");
             });
             if (validUrl) {
-                let res = await findOneByOrginalUrl(url).catch((err) => {
+                let res = await findOneByOriginalUrl(url).catch((err) => {
                     throw new ValidationError("URL Not Found");
                 });
                 if (res) {

@@ -53,6 +53,11 @@ type Mutation {
     remove_all_users(key: String!): Boolean
     remove_all_links(key: String!): Boolean
     remove_link(id: String!): Boolean
+    reset_password(
+        email: String!
+        token: String!
+        new_password: String
+    ): Boolean
 }
 
 #/* -------------------------------------------------------------------------- */
